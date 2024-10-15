@@ -1,11 +1,21 @@
+import 'package:bee_store/ilk_bolum.dart';
+import 'package:bee_store/parcalar/anasayfa_urun_widget.dart';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+Future<void> main()  async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);// hangi platform çağrılırsa ordan yap 
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
 
   // This widget is the root of your application.
   @override
@@ -30,72 +40,9 @@ class MyApp extends StatelessWidget {
             }, icon: Image.asset("varliklar/sepet.png"))
           ],
         ),
-        body:
-          Column(
-            children: [
-              const SizedBox(height: 24),
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    //labelText: "Search Anything...",
-                    hintText: "Search Anything...",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                        width: 1
-                      )
-                    ),
-                  ),
+        body:IlkBolum(),
 
-                ),
-              ),
-              
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  children: [
-                    Text("Categories" , style: TextStyle(color:Color(0xFF1F2937)
-                      ,fontSize: 14,fontFamily: 'Inter',fontWeight: FontWeight.w600,height: 0.11,letterSpacing: 0.07,
-                    ),),
-                    Spacer(),
-                    Text(
-                      'View All ->',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(color:Color(0xFF6B7280),fontSize: 12,
-                        fontFamily: 'Inter',fontWeight: FontWeight.w600,height: 0.12
-                      ),
-                    )
 
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for(int i=0; i<10 ; i++)
-                    Column(
-                      children: [
-                        if(i%2 ==0)
-                        Image.asset('varliklar/fashion.png')
-                        else
-                        Image.asset('varliklar/electronic.png'),
-                        Text(i%2 == 0 ?'Fashion' : "Electronic")
-                      ],
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-
-        drawer:const Drawer(
-
-        ),
       ),
     );
   }
