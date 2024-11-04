@@ -39,6 +39,14 @@ dependencies:
   firebase_core: ^3.6.0
   #firebase_core_web:
   #cloud_firestore_web:
+  flutter_native_splash: ^2.4.2
+  firebase_auth: ^5.3.1
+
+flutter_native_splash:
+  color: "#1D4ED8" # Arka plan rengi (istediğin gibi ayarla)
+  image: varliklar/icon.png # Splash ekranında görünecek resim (varsa)
+
+
 
 dev_dependencies:
   flutter_test:

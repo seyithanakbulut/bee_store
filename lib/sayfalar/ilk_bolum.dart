@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bee_store/parcalar/app_drawer.dart';
 import 'package:bee_store/parcalar/category_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -430,6 +431,7 @@ class _IlkBolumState extends State<IlkBolum> {
 
         ],
       ),
+      drawer: AppDrawer(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: sayfaSayisi,
         onTap: (value) {
@@ -460,7 +462,7 @@ class _IlkBolumState extends State<IlkBolum> {
           ),
         ],
       ),
-      drawer: const Drawer(),
+
     );
   }
 
