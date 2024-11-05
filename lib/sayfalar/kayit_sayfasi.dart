@@ -1,20 +1,20 @@
-import 'package:bee_store/sayfalar/kayit_sayfasi.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 
-class GirisSayfasi extends StatefulWidget {
-  const GirisSayfasi({super.key});
+class KayitSayfasi extends StatefulWidget {
+  const KayitSayfasi({super.key});
 
   @override
-  State<GirisSayfasi> createState() => _GirisSayfasiState();
+  State<KayitSayfasi> createState() => _KayitSayfasiState();
 }
 
-class _GirisSayfasiState extends State<GirisSayfasi> {
+class _KayitSayfasiState extends State<KayitSayfasi> {
 
   var _yukleniyor=false;
   var _hataMesaji="";
-
+  var _isimSoyisim="";
   var _email="";
   var _sifre="";
 
@@ -22,7 +22,7 @@ class _GirisSayfasiState extends State<GirisSayfasi> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      appBar: AppBar(title:Text("Giriş Sayfası") ,),
+      appBar: AppBar(title:Text("Kayıt Sayfası") ,),
       body: Padding(
         padding: const EdgeInsets.all(48.0),
         child: Column(
@@ -30,6 +30,21 @@ class _GirisSayfasiState extends State<GirisSayfasi> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if(_hataMesaji.isNotEmpty) Text("Bir hata oluştu : $_hataMesaji" , style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 22),),
+            TextField(
+              decoration: InputDecoration(hintText: "İsmini ve soyismini  giriniz."),
+              keyboardType: TextInputType.name,
+              onChanged: (deger){
+                _isimSoyisim=deger;
+                if(_hataMesaji.isNotEmpty){
+                  _hataMesaji="";
+                  setState(() {
+
+                  });
+                }
+              },
+
+            ),
+            const SizedBox(height: 24,),
             TextField(
               decoration: InputDecoration(hintText: "Email adresini giriniz."),
               keyboardType: TextInputType.emailAddress,
@@ -64,21 +79,37 @@ class _GirisSayfasiState extends State<GirisSayfasi> {
             else
               TextButton(onPressed: () {
 
-                if(_email.isNotEmpty && _sifre.isNotEmpty){
+                if(_email.isNotEmpty && _sifre.isNotEmpty && _isimSoyisim.isNotEmpty){
                   _yukleniyor= true;
                   setState(() {
                   });
-                  FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _sifre).catchError((hataMesaji){
+                  FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _sifre).catchError((hataMesaji){
                     _hataMesaji=hataMesaji.toString();
                     _yukleniyor=false;
                     setState(() {
 
                     });
 
+                  }).then((value) async{
+                    final uid=value.user?.uid;
+                    final kullanici ={
+                      'name':_isimSoyisim,
+                      'email': _email,
+                      'kayitTarihi':FieldValue.serverTimestamp(),
+                    };
+                    if(uid==null){
+                    await  FirebaseFirestore.instance.collection("users").add(kullanici);
+                    }else{
+                    await  FirebaseFirestore.instance.collection("users").doc(uid).set(kullanici);
+                    }
+
+                    if(mounted)  Navigator.of(context).pop();
+
+
                   });
                 }
                 else{
-                  _hataMesaji="Email adresi ve şifre boş geçilemez";
+                  _hataMesaji="Tüm Alanları doldurunuz.";
                   setState(() {
 
                   });
@@ -86,13 +117,8 @@ class _GirisSayfasiState extends State<GirisSayfasi> {
 
 
 
-            }, child: Text("Giriş Yap")),
-            const Divider(),
-            TextButton(onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                return KayitSayfasi();
-              }));
-            }, child: Text("Kayıt Ol "))
+            }, child: Text("Kayıt Ol")),
+
           ],
         ),
       ),
